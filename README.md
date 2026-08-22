@@ -1,6 +1,12 @@
-# Decimal Time
+# Decimal Time F*** yeah! we ball
 
-A French-Revolutionary-style decimal clock and calendar (10 hours/100 minutes/100
+Ever wondered what a better future could be?
+
+<img width="800" height="450" alt="image" src="https://github.com/user-attachments/assets/0f782909-8238-4398-9b00-67c2ff281308" />
+
+
+Sometimes in life all you need is a little revolution to bring a sunny day. In this spirit
+I've created a French-Revolutionary inspired decimal clock and calendar applet (10 hours/100 minutes/100
 seconds a day; 12 months of 30 days each), reimagined with internationalized
 month and day names instead of the original's Paris-specific weather poetry.
 
@@ -51,3 +57,4 @@ cp -r cinnamon-applet/decimal-time@example.local ~/.local/share/cinnamon/applets
 - The leap-day rule (5 vs. 6 epagomenal days) is a modern heuristic tied to
   the Gregorian leap cycle, since the original calendar never settled on one
   before it was abolished in 1806.
+  -Viva la revolución!
