@@ -40,6 +40,10 @@ cp -r cinnamon-applet/decimal-time@example.local ~/.local/share/cinnamon/applets
 # then right-click the panel -> Applets -> Manage -> enable "Decimal Time & Calendar".
 ```
 
+## Ok that's cool but what does it look like huh? Check this metric bliss out:
+<img width="400" height="550" alt="image" src="https://github.com/user-attachments/assets/ea6ca167-3d6b-4a0a-b801-a326282d927f" />
+
+
 ## Notes / simplifications
 
 - The Republican year is approximated as beginning Sept 22 each year rather
