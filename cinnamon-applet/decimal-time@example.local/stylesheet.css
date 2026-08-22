@@ -1,0 +1,78 @@
+.decimal-popup-time {
+  font-family: monospace;
+  font-size: 1.3em;
+  font-weight: bold;
+  padding: 6px 12px 2px;
+}
+
+.decimal-popup-sub {
+  font-size: 0.85em;
+  color: #a9a08c;
+  padding: 0 12px 8px;
+}
+
+.decimal-popup-date {
+  font-weight: bold;
+  padding: 2px 12px 6px;
+}
+
+.decimal-nav-row {
+  padding: 4px 8px 8px;
+  spacing: 6px;
+}
+
+.decimal-nav-button {
+  padding: 4px 10px;
+  border: 1px solid #b8873b;
+  border-radius: 4px;
+  color: #ddb268;
+}
+
+.decimal-nav-button:hover {
+  background-color: rgba(184,135,59,0.2);
+}
+
+.decimal-month-label {
+  font-weight: bold;
+  padding: 4px 12px 4px;
+}
+
+.decimal-grid {
+  padding: 2px 8px 10px;
+  spacing: 3px;
+}
+
+.decimal-grid-row {
+  spacing: 3px;
+}
+
+.decimal-grid-cell {
+  width: 28px;
+}
+
+.decimal-grid-num {
+  font-family: monospace;
+  font-size: 0.85em;
+  text-align: center;
+}
+
+.decimal-grid-abbr {
+  font-size: 0.55em;
+  color: #a9a08c;
+  text-align: center;
+}
+
+.decimal-grid-today .decimal-grid-num {
+  color: #ddb268;
+  font-weight: bold;
+}
+
+.decimal-grid-rest .decimal-grid-num {
+  color: #b5544b;
+}
+
+.decimal-epagomenal-label {
+  padding: 4px 12px 10px;
+  color: #ddb268;
+  font-style: italic;
+}

@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Temps & Calendrier Décimal</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink: #14181b;
+    --ink-2: #1c2226;
+    --brass: #b8873b;
+    --brass-bright: #ddb268;
+    --parchment: #e9e2d0;
+    --parchment-dim: #a9a08c;
+    --rouge: #8a3a34;
+    --line: rgba(233,226,208,0.14);
+    --today-glow: rgba(221,178,104,0.16);
+  }
+  *{ box-sizing: border-box; }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    background: radial-gradient(ellipse at 50% -10%, #202729 0%, var(--ink) 55%);
+    color: var(--parchment);
+    font-family: "IBM Plex Serif", serif;
+    padding: 48px 20px 60px;
+  }
+
+  .masthead{
+    text-align:center;
+    margin-bottom: 34px;
+  }
+  .masthead .eyebrow{
+    font-family:"IBM Plex Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--brass);
+    margin: 0 0 6px;
+  }
+  .masthead h1{
+    font-family:"Fraunces", serif;
+    font-weight: 500;
+    font-style: italic;
+    font-size: clamp(26px, 6vw, 36px);
+    margin: 0;
+  }
+
+  .case{
+    display:flex;
+    flex-wrap: wrap;
+    gap: 28px;
+    justify-content:center;
+    align-items:flex-start;
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+
+  .plate{
+    width: min(92vw, 460px);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 34px 30px 26px;
+    background: linear-gradient(180deg, var(--ink-2), var(--ink));
+    box-shadow: 0 30px 80px -30px rgba(0,0,0,0.8), inset 0 0 0 1px rgba(184,135,59,0.08);
+    position: relative;
+  }
+  .plate::before{
+    content:"";
+    position:absolute; inset: 8px;
+    border: 1px solid rgba(184,135,59,0.18);
+    border-radius: 2px;
+    pointer-events:none;
+  }
+
+  .plate-eyebrow{
+    font-family:"IBM Plex Mono", monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--brass);
+    text-align:center;
+    margin: 0 0 4px;
+  }
+  .plate h2{
+    font-family:"Fraunces", serif;
+    font-weight: 500;
+    font-style: italic;
+    font-size: clamp(19px, 4.4vw, 24px);
+    text-align:center;
+    margin: 0 0 20px;
+  }
+
+  /* ---- Clock ---- */
+  .dial-wrap{ display:flex; justify-content:center; margin-bottom: 20px; }
+  svg{ overflow: visible; }
+  .tick{ stroke: var(--parchment-dim); stroke-width: 1; }
+  .tick.major{ stroke: var(--brass-bright); stroke-width: 2; }
+  .tick-label{ font-family:"IBM Plex Mono", monospace; font-size: 13px; fill: var(--parchment); }
+  .rim{ fill: none; stroke: var(--brass); stroke-width: 1.5; }
+  .rim-inner{ fill: var(--ink-2); stroke: var(--line); stroke-width: 1; }
+  .hub{ fill: var(--brass-bright); }
+  .hand-hour{ stroke: var(--parchment); stroke-width: 3.5; stroke-linecap: round; }
+  .hand-minute{ stroke: var(--brass-bright); stroke-width: 2.2; stroke-linecap: round; }
+  .hand-second{ stroke: var(--rouge); stroke-width: 1.2; stroke-linecap: round; }
+
+  .readout{
+    font-family:"IBM Plex Mono", monospace;
+    text-align:center;
+    font-size: clamp(30px, 8vw, 40px);
+    letter-spacing: 0.04em;
+    margin: 4px 0 2px;
+    font-variant-numeric: tabular-nums;
+  }
+  .readout .sep{ color: var(--brass); }
+  .readout .ds{ color: var(--parchment-dim); font-size: 0.5em; vertical-align: 2px; }
+  .sub{
+    text-align:center;
+    font-family:"IBM Plex Mono", monospace;
+    font-size: 11.5px;
+    color: var(--parchment-dim);
+    letter-spacing: 0.04em;
+    margin-top: 6px;
+  }
+
+  .divider{ height:1px; background: var(--line); margin: 18px 0 14px; }
+
+  .caption{
+    font-family:"IBM Plex Serif", serif;
+    font-style: italic;
+    font-size: 12px;
+    color: var(--parchment-dim);
+    text-align:center;
+    line-height: 1.55;
+  }
+  .caption b{ color: var(--brass-bright); font-style: normal; font-weight: 400; }
+
+  /* ---- Calendar ---- */
+  .year-line{
+    text-align:center;
+    font-family:"IBM Plex Mono", monospace;
+    font-size: 11.5px;
+    color: var(--parchment-dim);
+    margin-bottom: 18px;
+    letter-spacing: 0.05em;
+  }
+  .today-readout{ text-align:center; margin-bottom: 18px; }
+  .today-readout .big{
+    font-family:"Fraunces", serif;
+    font-weight: 500;
+    font-size: clamp(18px, 4.6vw, 22px);
+    color: var(--brass-bright);
+    line-height: 1.3;
+  }
+  .today-readout .small{
+    font-family:"IBM Plex Mono", monospace;
+    font-size: 11px;
+    color: var(--parchment-dim);
+    margin-top: 5px;
+  }
+
+  .nav-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .nav-btn{
+    font-family:"IBM Plex Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--brass-bright);
+    background: transparent;
+    border: 1px solid var(--brass);
+    border-radius: 2px;
+    padding: 7px 10px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    white-space: nowrap;
+  }
+  .nav-btn:hover{ background: rgba(184,135,59,0.14); }
+  .nav-btn:focus-visible{ outline: 2px solid var(--brass-bright); outline-offset: 2px; }
+  .nav-btn.today-btn{ flex: 0 0 auto; }
+
+  .month-label{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    margin-bottom: 12px;
+  }
+  .month-label .name{
+    font-family:"Fraunces", serif;
+    font-style: italic;
+    font-size: 18px;
+  }
+  .month-label .decades{
+    font-family:"IBM Plex Mono", monospace;
+    font-size: 10.5px;
+    color: var(--brass);
+    letter-spacing: 0.07em;
+  }
+
+  table.grid{ width:100%; border-collapse: collapse; margin-bottom: 18px; }
+  table.grid td{
+    text-align:center;
+    padding: 8px 2px;
+    font-family:"IBM Plex Mono", monospace;
+    font-size: 12.5px;
+    color: var(--parchment-dim);
+    border: 1px solid var(--line);
+  }
+  table.grid tr:nth-child(3n+1) td{ border-top: 1px solid var(--brass); }
+  table.grid td .dn{ display:block; font-size: 14.5px; color: var(--parchment); font-weight: 500; }
+  table.grid td .dname{
+    display:block; font-size: 8px; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--parchment-dim); margin-top: 2px;
+  }
+  table.grid td.today{ background: var(--today-glow); border: 1px solid var(--brass-bright) !important; }
+  table.grid td.today .dn{ color: var(--brass-bright); }
+  table.grid td.restday .dn{ color: var(--rouge); }
+  .epag-note{
+    padding: 20px 8px;
+    font-style: italic;
+    color: var(--parchment-dim);
+    text-align:center;
+  }
+
+  @media (max-width: 420px){
+    table.grid td{ padding: 6px 1px; }
+    table.grid td .dn{ font-size: 12.5px; }
+    table.grid td .dname{ display:none; }
+  }
+
+  @media (prefers-reduced-motion: reduce){ * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <p class="eyebrow">An. II · Système Décimal</p>
+  <h1>Temps & Calendrier Décimal</h1>
+</div>
+
+<div class="case">
+
+  <!-- CLOCK PLATE -->
+  <div class="plate">
+    <p class="plate-eyebrow">Instrument I</p>
+    <h2>Temps Décimal</h2>
+    <div class="dial-wrap">
+      <svg id="dial" width="240" height="240" viewBox="0 0 260 260">
+        <circle class="rim-inner" cx="130" cy="130" r="118"></circle>
+        <circle class="rim" cx="130" cy="130" r="118"></circle>
+        <circle class="rim" cx="130" cy="130" r="100" opacity="0.35"></circle>
+        <g id="ticks"></g>
+        <g id="hands"></g>
+        <circle class="hub" cx="130" cy="130" r="4.5"></circle>
+      </svg>
+    </div>
+    <div class="readout" id="readout">0<span class="sep">:</span>00<span class="sep">:</span>00</div>
+    <div class="sub" id="standard-sub">standard time —</div>
+    <div class="divider"></div>
+    <p class="caption">
+      10 decimal hours, 100 decimal minutes, 100 decimal seconds.
+      Decimal noon (<b>5:00:00</b>) falls at ordinary noon.
+      1 decimal second ≈ <b>0.864</b> SI seconds.
+    </p>
+  </div>
+
+  <!-- CALENDAR PLATE -->
+  <div class="plate">
+    <p class="plate-eyebrow">Instrument II</p>
+    <h2>Calendrier Décimal</h2>
+    <p class="year-line" id="year-line">—</p>
+
+    <div class="today-readout">
+      <div class="big" id="today-big">—</div>
+      <div class="small" id="today-small">—</div>
+    </div>
+
+    <div class="nav-row">
+      <button class="nav-btn" id="prev-btn" aria-label="Previous month">◀ Prev</button>
+      <button class="nav-btn today-btn" id="today-btn">Today</button>
+      <button class="nav-btn" id="next-btn" aria-label="Next month">Next ▶</button>
+    </div>
+
+    <div class="month-label">
+      <span class="name" id="month-name">—</span>
+      <span class="decades" id="decades-label">3 DÉCADES · 30 DAYS</span>
+    </div>
+
+    <table class="grid" id="grid"></table>
+
+    <div class="divider"></div>
+    <p class="caption">
+      Months numbered in Latin (<b>Unember → Duodecember</b>), days in Greek
+      (<b>Monoday → Decaday</b>) — roots already familiar worldwide, unlike the
+      original's Parisian weather poetry. 5–6 <b>Epagomenal</b> days close out
+      each year, belonging to no month. Year begins at the September equinox
+      (approximated here as Sept 22).
+    </p>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  /* ============== SHARED ============== */
+  const MONTHS = ["Unember","Duember","Triember","Quadember","Quintember","Sextember",
+                  "September","October","November","December","Undecember","Duodecember"];
+  const DAYS = ["Monoday","Diday","Triday","Tetraday","Pentaday","Hexaday","Heptaday","Octaday","Enneaday","Decaday"];
+  const DAYS_ABBR = ["Mono","Di","Tri","Tetra","Penta","Hexa","Hepta","Octa","Ennea","Deca"];
+  const EPAGOMENAL = ["Epagomenal I","Epagomenal II","Epagomenal III","Epagomenal IV","Epagomenal V","Epagomenal VI (Leap)"];
+
+  function isGregorianLeap(y){ return (y % 4 === 0 && y % 100 !== 0) || (y % 400 === 0); }
+
+  function computeRepublicanDate(now){
+    const y = now.getFullYear();
+    let epochYear = y;
+    let epoch = new Date(y, 8, 22);
+    if(now < epoch){ epochYear = y - 1; epoch = new Date(epochYear, 8, 22); }
+    const republicanYear = epochYear - 1791;
+    const msPerDay = 86400000;
+    const dayIndex = Math.floor((new Date(now.getFullYear(),now.getMonth(),now.getDate()) - epoch) / msPerDay);
+    const complementaryCount = isGregorianLeap(epochYear + 1) ? 6 : 5;
+
+    if(dayIndex < 360){
+      const monthIndex = Math.floor(dayIndex / 30);
+      const dayOfMonth = (dayIndex % 30) + 1;
+      const decadeIndex = Math.floor((dayOfMonth - 1) / 10);
+      const dayInDecadeIndex = (dayOfMonth - 1) % 10;
+      return { republicanYear, monthIndex, dayOfMonth, decadeIndex, dayInDecadeIndex, isEpagomenal:false, complementaryCount };
+    } else {
+      const epagIndex = dayIndex - 360;
+      return { republicanYear, epagIndex, isEpagomenal:true, complementaryCount };
+    }
+  }
+
+  /* ============== CLOCK ============== */
+  const NS = "http://www.w3.org/2000/svg";
+  const cx = 130, cy = 130, rOuter = 118, rInner = 100;
+  const ticksG = document.getElementById('ticks');
+  const handsG = document.getElementById('hands');
+
+  for(let i=0;i<10;i++){
+    const majorAngle = (i/10) * 2*Math.PI - Math.PI/2;
+    const x1 = cx + Math.cos(majorAngle)*rInner, y1 = cy + Math.sin(majorAngle)*rInner;
+    const x2 = cx + Math.cos(majorAngle)*rOuter, y2 = cy + Math.sin(majorAngle)*rOuter;
+    const line = document.createElementNS(NS,"line");
+    line.setAttribute("x1",x1); line.setAttribute("y1",y1);
+    line.setAttribute("x2",x2); line.setAttribute("y2",y2);
+    line.setAttribute("class","tick major");
+    ticksG.appendChild(line);
+
+    const lx = cx + Math.cos(majorAngle)*(rInner-20), ly = cy + Math.sin(majorAngle)*(rInner-20);
+    const text = document.createElementNS(NS,"text");
+    text.setAttribute("x",lx); text.setAttribute("y",ly+4);
+    text.setAttribute("text-anchor","middle"); text.setAttribute("class","tick-label");
+    text.textContent = i;
+    ticksG.appendChild(text);
+
+    for(let j=1;j<5;j++){
+      const minorAngle = ((i + j/5)/10) * 2*Math.PI - Math.PI/2;
+      const mx1 = cx + Math.cos(minorAngle)*(rOuter-8), my1 = cy + Math.sin(minorAngle)*(rOuter-8);
+      const mx2 = cx + Math.cos(minorAngle)*rOuter, my2 = cy + Math.sin(minorAngle)*rOuter;
+      const mline = document.createElementNS(NS,"line");
+      mline.setAttribute("x1",mx1); mline.setAttribute("y1",my1);
+      mline.setAttribute("x2",mx2); mline.setAttribute("y2",my2);
+      mline.setAttribute("class","tick");
+      ticksG.appendChild(mline);
+    }
+  }
+
+  function makeHand(cls){
+    const line = document.createElementNS(NS,"line");
+    line.setAttribute("class", cls);
+    line.setAttribute("x1", cx); line.setAttribute("y1", cy);
+    handsG.appendChild(line);
+    return line;
+  }
+  const handHour = makeHand("hand-hour"), handMin = makeHand("hand-minute"), handSec = makeHand("hand-second");
+
+  function setHand(hand, fraction, length){
+    const angle = fraction * 2*Math.PI - Math.PI/2;
+    hand.setAttribute("x2", cx + Math.cos(angle)*length);
+    hand.setAttribute("y2", cy + Math.sin(angle)*length);
+  }
+
+  const readout = document.getElementById('readout');
+  const standardSub = document.getElementById('standard-sub');
+  function pad(n){ return String(n).padStart(2,'0'); }
+
+  function tickClock(){
+    const now = new Date();
+    const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const fractionOfDay = (now - startOfDay) / 86400000;
+    const decimalSecondsTotal = fractionOfDay * 100000;
+    const dHour = Math.floor(decimalSecondsTotal / 10000);
+    const remAfterHour = decimalSecondsTotal % 10000;
+    const dMinute = Math.floor(remAfterHour / 100);
+    const remAfterMinute = remAfterHour % 100;
+    const dSecond = Math.floor(remAfterMinute);
+    const dDeciSecond = Math.floor((remAfterMinute - dSecond) * 10);
+
+    readout.innerHTML = dHour + '<span class="sep">:</span>' + pad(dMinute) +
+      '<span class="sep">:</span>' + pad(dSecond) + '<span class="ds">.' + dDeciSecond + '</span>';
+    standardSub.textContent = 'standard time ' + pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
+
+    setHand(handHour, fractionOfDay, 55);
+    setHand(handMin, (decimalSecondsTotal % 10000) / 10000, 82);
+    setHand(handSec, (decimalSecondsTotal % 100) / 100, 92);
+
+    setTimeout(tickClock, 80);
+  }
+  tickClock();
+
+  /* ============== CALENDAR (navigable) ============== */
+  const grid = document.getElementById('grid');
+  const monthNameEl = document.getElementById('month-name');
+  const yearLineEl = document.getElementById('year-line');
+  const decadesLabelEl = document.getElementById('decades-label');
+
+  // view.monthIndex: 0-11 normal months, 12 = epagomenal block
+  let view = null;
+
+  function todayView(){
+    const t = computeRepublicanDate(new Date());
+    return { republicanYear: t.republicanYear, monthIndex: t.isEpagomenal ? 12 : t.monthIndex };
+  }
+
+  function complementaryCountForYear(republicanYear){
+    const epochYear = republicanYear + 1791;
+    return isGregorianLeap(epochYear + 1) ? 6 : 5;
+  }
+
+  function goNext(){
+    if(view.monthIndex < 12){ view.monthIndex += 1; }
+    else { view.republicanYear += 1; view.monthIndex = 0; }
+    renderCalendar();
+  }
+  function goPrev(){
+    if(view.monthIndex > 0){ view.monthIndex -= 1; }
+    else { view.republicanYear -= 1; view.monthIndex = 12; }
+    renderCalendar();
+  }
+  function goToday(){ view = todayView(); renderCalendar(); }
+
+  function renderCalendar(){
+    const now = new Date();
+    const t = computeRepublicanDate(now);
+    const isViewingToday = (view.republicanYear === t.republicanYear && view.monthIndex === (t.isEpagomenal ? 12 : t.monthIndex));
+
+    // "today" line always reflects the real current moment, regardless of browsing
+    if(t.isEpagomenal){
+      document.getElementById('today-big').textContent = EPAGOMENAL[t.epagIndex];
+    } else {
+      document.getElementById('today-big').textContent =
+        DAYS[t.dayInDecadeIndex] + ', ' + t.dayOfMonth + ' ' + MONTHS[t.monthIndex] + ', Year ' + t.republicanYear;
+    }
+    document.getElementById('today-small').textContent = 'Today, standard date: ' + now.toDateString();
+
+    yearLineEl.textContent = 'Viewing Year ' + view.republicanYear + ' of the Republic';
+
+    if(view.monthIndex === 12){
+      monthNameEl.textContent = 'Epagomenal Days';
+      decadesLabelEl.textContent = complementaryCountForYear(view.republicanYear) + ' DAYS · OUTSIDE THE MONTHS';
+      const count = complementaryCountForYear(view.republicanYear);
+      let html = '<tr><td colspan="10" class="epag-note">';
+      const names = EPAGOMENAL.slice(0, count).join(' · ');
+      html += names;
+      html += '</td></tr>';
+      grid.innerHTML = html;
+
+      // highlight nothing in table form; note if today falls here
+      if(isViewingToday){
+        grid.querySelector('.epag-note').style.color = 'var(--brass-bright)';
+      }
+      return;
+    }
+
+    monthNameEl.textContent = MONTHS[view.monthIndex];
+    decadesLabelEl.textContent = '3 DÉCADES · 30 DAYS';
+
+    grid.innerHTML = "";
+    for(let decade=0; decade<3; decade++){
+      const tr = document.createElement('tr');
+      for(let d=0; d<10; d++){
+        const dayOfMonth = decade*10 + d + 1;
+        const td = document.createElement('td');
+        const isToday = isViewingToday && !t.isEpagomenal && decade === t.decadeIndex && d === t.dayInDecadeIndex;
+        const isRest = (d === 9);
+        if(isToday) td.classList.add('today');
+        if(isRest) td.classList.add('restday');
+        td.innerHTML = '<span class="dn">'+dayOfMonth+'</span><span class="dname">'+DAYS_ABBR[d]+'</span>';
+        tr.appendChild(td);
+      }
+      grid.appendChild(tr);
+    }
+  }
+
+  document.getElementById('prev-btn').addEventListener('click', goPrev);
+  document.getElementById('next-btn').addEventListener('click', goNext);
+  document.getElementById('today-btn').addEventListener('click', goToday);
+
+  view = todayView();
+  renderCalendar();
+  setInterval(renderCalendar, 60000); // keep the "today" line and highlight fresh
+})();
+</script>
+
+</body>
+</html>

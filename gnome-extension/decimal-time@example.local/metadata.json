@@ -1,0 +1,7 @@
+{
+  "uuid": "decimal-time@example.local",
+  "name": "Decimal Time & Calendar",
+  "description": "A French-Revolutionary-style decimal clock (10 hours/100 min/100 sec) and a navigable decimal calendar, in the top panel.",
+  "shell-version": ["45", "46", "47", "48"],
+  "url": ""
+}

@@ -1,0 +1,49 @@
+# Decimal Time
+
+A French-Revolutionary-style decimal clock and calendar (10 hours/100 minutes/100
+seconds a day; 12 months of 30 days each), reimagined with internationalized
+month and day names instead of the original's Paris-specific weather poetry.
+
+- **Months** (Latin numeral roots, extending the familiar September–December):
+  Unember, Duember, Triember, Quadember, Quintember, Sextember, September,
+  October, November, December, Undecember, Duodecember.
+- **Days of the décade** (Greek numeral roots, as in polygon names):
+  Monoday, Diday, Triday, Tetraday, Pentaday, Hexaday, Heptaday, Octaday,
+  Enneaday, Decaday (rest day).
+- **Epagomenal days**: 5 or 6 extra days at year's end, belonging to no month.
+
+## Contents
+
+- `web/decimal-time.html` — standalone browser version: live decimal clock
+  dial plus a navigable decimal calendar (Prev/Today/Next). No dependencies,
+  just open it in a browser.
+- `web/decimal-clock.html`, `web/decimal-calendar.html` — earlier standalone
+  versions of the clock and calendar separately.
+- `gnome-extension/decimal-time@example.local/` — GNOME Shell top-bar
+  extension (GNOME 45+, ESM-based).
+- `cinnamon-applet/decimal-time@example.local/` — Cinnamon panel applet
+  (Linux Mint's default desktop), ported from the GNOME version.
+
+## Installing the GNOME extension
+
+```bash
+cp -r gnome-extension/decimal-time@example.local ~/.local/share/gnome-shell/extensions/
+gnome-extensions enable decimal-time@example.local
+# X11: Alt+F2, r, Enter to reload the shell. Wayland: log out/in.
+```
+
+## Installing the Cinnamon applet
+
+```bash
+cp -r cinnamon-applet/decimal-time@example.local ~/.local/share/cinnamon/applets/
+# Restart Cinnamon (Ctrl+Alt+Esc, or `cinnamon --replace &` in a terminal),
+# then right-click the panel -> Applets -> Manage -> enable "Decimal Time & Calendar".
+```
+
+## Notes / simplifications
+
+- The Republican year is approximated as beginning Sept 22 each year rather
+  than the true astronomical equinox (which can shift by a day).
+- The leap-day rule (5 vs. 6 epagomenal days) is a modern heuristic tied to
+  the Gregorian leap cycle, since the original calendar never settled on one
+  before it was abolished in 1806.

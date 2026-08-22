@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Temps Décimal — Decimal Clock</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink: #14181b;
+    --ink-2: #1c2226;
+    --brass: #b8873b;
+    --brass-bright: #ddb268;
+    --parchment: #e9e2d0;
+    --parchment-dim: #a9a08c;
+    --rouge: #8a3a34;
+    --line: rgba(233,226,208,0.14);
+  }
+
+  *{ box-sizing: border-box; }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:
+      radial-gradient(ellipse at 50% -10%, #202729 0%, var(--ink) 55%);
+    color: var(--parchment);
+    font-family: "IBM Plex Serif", serif;
+    padding: 40px 20px;
+  }
+
+  .plate{
+    width: min(92vw, 480px);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 36px 32px 28px;
+    background: linear-gradient(180deg, var(--ink-2), var(--ink));
+    box-shadow: 0 30px 80px -30px rgba(0,0,0,0.8), inset 0 0 0 1px rgba(184,135,59,0.08);
+    position: relative;
+  }
+
+  .plate::before{
+    content:"";
+    position:absolute;
+    inset: 8px;
+    border: 1px solid rgba(184,135,59,0.18);
+    border-radius: 2px;
+    pointer-events:none;
+  }
+
+  .eyebrow{
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--brass);
+    text-align:center;
+    margin: 0 0 4px;
+  }
+
+  h1{
+    font-family: "Fraunces", serif;
+    font-weight: 500;
+    font-style: italic;
+    font-size: clamp(22px, 5vw, 30px);
+    text-align:center;
+    margin: 0 0 22px;
+    color: var(--parchment);
+    letter-spacing: 0.01em;
+  }
+
+  .dial-wrap{
+    display:flex;
+    justify-content:center;
+    margin-bottom: 22px;
+  }
+
+  svg{ overflow: visible; }
+
+  .tick{ stroke: var(--parchment-dim); stroke-width: 1; }
+  .tick.major{ stroke: var(--brass-bright); stroke-width: 2; }
+  .tick-label{
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 13px;
+    fill: var(--parchment);
+  }
+  .rim{ fill: none; stroke: var(--brass); stroke-width: 1.5; }
+  .rim-inner{ fill: var(--ink-2); stroke: var(--line); stroke-width: 1; }
+  .hub{ fill: var(--brass-bright); }
+
+  .hand-hour{ stroke: var(--parchment); stroke-width: 3.5; stroke-linecap: round; }
+  .hand-minute{ stroke: var(--brass-bright); stroke-width: 2.2; stroke-linecap: round; }
+  .hand-second{ stroke: var(--rouge); stroke-width: 1.2; stroke-linecap: round; }
+
+  .readout{
+    font-family: "IBM Plex Mono", monospace;
+    text-align:center;
+    font-size: clamp(34px, 9vw, 46px);
+    letter-spacing: 0.04em;
+    color: var(--parchment);
+    margin: 4px 0 2px;
+    font-variant-numeric: tabular-nums;
+  }
+  .readout .sep{ color: var(--brass); }
+  .readout .ds{ color: var(--parchment-dim); font-size: 0.5em; vertical-align: 2px;}
+
+  .sub{
+    text-align:center;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    color: var(--parchment-dim);
+    letter-spacing: 0.04em;
+    margin-top: 8px;
+  }
+
+  .divider{
+    height:1px;
+    background: var(--line);
+    margin: 18px 0 14px;
+  }
+
+  .caption{
+    font-family: "IBM Plex Serif", serif;
+    font-style: italic;
+    font-size: 12.5px;
+    color: var(--parchment-dim);
+    text-align:center;
+    line-height: 1.5;
+  }
+  .caption b{ color: var(--brass-bright); font-style: normal; font-weight: 400; }
+
+  @media (prefers-reduced-motion: reduce){
+    * { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="plate">
+  <p class="eyebrow">An. II · Système Décimal</p>
+  <h1>Temps Décimal</h1>
+
+  <div class="dial-wrap">
+    <svg id="dial" width="260" height="260" viewBox="0 0 260 260">
+      <circle class="rim-inner" cx="130" cy="130" r="118"></circle>
+      <circle class="rim" cx="130" cy="130" r="118"></circle>
+      <circle class="rim" cx="130" cy="130" r="100" opacity="0.35"></circle>
+      <g id="ticks"></g>
+      <g id="hands"></g>
+      <circle class="hub" cx="130" cy="130" r="4.5"></circle>
+    </svg>
+  </div>
+
+  <div class="readout" id="readout">0<span class="sep">:</span>00<span class="sep">:</span>00</div>
+  <div class="sub" id="standard-sub">standard time —</div>
+
+  <div class="divider"></div>
+  <p class="caption">
+    Day divided into <b>10</b> decimal hours, each of <b>100</b> decimal minutes,
+    each of <b>100</b> decimal seconds. Decimal noon (<b>5:00:00</b>) falls at ordinary noon.
+    1 decimal second ≈ <b>0.864</b> SI seconds.
+  </p>
+</div>
+
+<script>
+(function(){
+  const NS = "http://www.w3.org/2000/svg";
+  const cx = 130, cy = 130, rOuter = 118, rInner = 100;
+  const ticksG = document.getElementById('ticks');
+  const handsG = document.getElementById('hands');
+
+  // Draw 10 major ticks (decimal hours) + 5 minor between each
+  for(let i=0;i<10;i++){
+    const majorAngle = (i/10) * 2*Math.PI - Math.PI/2;
+    const x1 = cx + Math.cos(majorAngle)*rInner;
+    const y1 = cy + Math.sin(majorAngle)*rInner;
+    const x2 = cx + Math.cos(majorAngle)*rOuter;
+    const y2 = cy + Math.sin(majorAngle)*rOuter;
+    const line = document.createElementNS(NS,"line");
+    line.setAttribute("x1",x1); line.setAttribute("y1",y1);
+    line.setAttribute("x2",x2); line.setAttribute("y2",y2);
+    line.setAttribute("class","tick major");
+    ticksG.appendChild(line);
+
+    const lx = cx + Math.cos(majorAngle)*(rInner-20);
+    const ly = cy + Math.sin(majorAngle)*(rInner-20);
+    const text = document.createElementNS(NS,"text");
+    text.setAttribute("x",lx); text.setAttribute("y",ly+4);
+    text.setAttribute("text-anchor","middle");
+    text.setAttribute("class","tick-label");
+    text.textContent = i;
+    ticksG.appendChild(text);
+
+    for(let j=1;j<5;j++){
+      const minorAngle = ((i + j/5)/10) * 2*Math.PI - Math.PI/2;
+      const mx1 = cx + Math.cos(minorAngle)*(rOuter-8);
+      const my1 = cy + Math.sin(minorAngle)*(rOuter-8);
+      const mx2 = cx + Math.cos(minorAngle)*rOuter;
+      const my2 = cy + Math.sin(minorAngle)*rOuter;
+      const mline = document.createElementNS(NS,"line");
+      mline.setAttribute("x1",mx1); mline.setAttribute("y1",my1);
+      mline.setAttribute("x2",mx2); mline.setAttribute("y2",my2);
+      mline.setAttribute("class","tick");
+      ticksG.appendChild(mline);
+    }
+  }
+
+  function makeHand(cls){
+    const line = document.createElementNS(NS,"line");
+    line.setAttribute("class", cls);
+    line.setAttribute("x1", cx); line.setAttribute("y1", cy);
+    handsG.appendChild(line);
+    return line;
+  }
+  const handHour = makeHand("hand-hour");
+  const handMin = makeHand("hand-minute");
+  const handSec = makeHand("hand-second");
+
+  function setHand(hand, fractionOfCircle, length){
+    const angle = fractionOfCircle * 2*Math.PI - Math.PI/2;
+    hand.setAttribute("x2", cx + Math.cos(angle)*length);
+    hand.setAttribute("y2", cy + Math.sin(angle)*length);
+  }
+
+  const readout = document.getElementById('readout');
+  const standardSub = document.getElementById('standard-sub');
+
+  function pad(n){ return String(n).padStart(2,'0'); }
+
+  function tick(){
+    const now = new Date();
+    const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const msSinceMidnight = now - startOfDay;
+    const fractionOfDay = msSinceMidnight / 86400000; // 0..1
+
+    const decimalSecondsTotal = fractionOfDay * 100000; // 0..100000
+    const dHour = Math.floor(decimalSecondsTotal / 10000);
+    const remAfterHour = decimalSecondsTotal % 10000;
+    const dMinute = Math.floor(remAfterHour / 100);
+    const remAfterMinute = remAfterHour % 100;
+    const dSecond = Math.floor(remAfterMinute);
+    const dDeciSecond = Math.floor((remAfterMinute - dSecond) * 10);
+
+    readout.innerHTML =
+      dHour + '<span class="sep">:</span>' +
+      pad(dMinute) + '<span class="sep">:</span>' +
+      pad(dSecond) +
+      '<span class="ds">.' + dDeciSecond + '</span>';
+
+    standardSub.textContent = 'standard time ' +
+      pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
+
+    // hands: hour hand sweeps full circle per 10 decimal hours (i.e. per day)
+    setHand(handHour, fractionOfDay, 55);
+    // minute hand sweeps full circle per decimal hour
+    setHand(handMin, (decimalSecondsTotal % 10000) / 10000, 82);
+    // second hand sweeps full circle per decimal minute
+    setHand(handSec, (decimalSecondsTotal % 100) / 100, 92);
+
+    requestAnimationFrame(() => setTimeout(tick, 80));
+  }
+  tick();
+})();
+</script>
+
+</body>
+</html>

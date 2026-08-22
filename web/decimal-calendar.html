@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Calendrier Décimal — Decimal Calendar</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink: #14181b;
+    --ink-2: #1c2226;
+    --brass: #b8873b;
+    --brass-bright: #ddb268;
+    --parchment: #e9e2d0;
+    --parchment-dim: #a9a08c;
+    --rouge: #8a3a34;
+    --line: rgba(233,226,208,0.14);
+    --today-glow: rgba(221,178,104,0.16);
+  }
+
+  *{ box-sizing: border-box; }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background: radial-gradient(ellipse at 50% -10%, #202729 0%, var(--ink) 55%);
+    color: var(--parchment);
+    font-family: "IBM Plex Serif", serif;
+    padding: 40px 20px;
+  }
+
+  .plate{
+    width: min(92vw, 560px);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 34px 32px 28px;
+    background: linear-gradient(180deg, var(--ink-2), var(--ink));
+    box-shadow: 0 30px 80px -30px rgba(0,0,0,0.8), inset 0 0 0 1px rgba(184,135,59,0.08);
+    position: relative;
+  }
+  .plate::before{
+    content:"";
+    position:absolute; inset: 8px;
+    border: 1px solid rgba(184,135,59,0.18);
+    border-radius: 2px;
+    pointer-events:none;
+  }
+
+  .eyebrow{
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--brass);
+    text-align:center;
+    margin: 0 0 4px;
+  }
+  h1{
+    font-family: "Fraunces", serif;
+    font-weight: 500;
+    font-style: italic;
+    font-size: clamp(22px, 5vw, 30px);
+    text-align:center;
+    margin: 0 0 4px;
+    letter-spacing: 0.01em;
+  }
+  .year-line{
+    text-align:center;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    color: var(--parchment-dim);
+    margin-bottom: 22px;
+    letter-spacing: 0.06em;
+  }
+
+  .today-readout{
+    text-align:center;
+    margin-bottom: 24px;
+  }
+  .today-readout .big{
+    font-family: "Fraunces", serif;
+    font-weight: 500;
+    font-size: clamp(24px, 6vw, 32px);
+    color: var(--brass-bright);
+    line-height: 1.25;
+  }
+  .today-readout .small{
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    color: var(--parchment-dim);
+    margin-top: 6px;
+  }
+
+  .divider{ height:1px; background: var(--line); margin: 6px 0 20px; }
+
+  .month-label{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    margin-bottom: 14px;
+  }
+  .month-label .name{
+    font-family:"Fraunces", serif;
+    font-style: italic;
+    font-size: 19px;
+    color: var(--parchment);
+  }
+  .month-label .decades{
+    font-family:"IBM Plex Mono", monospace;
+    font-size: 11px;
+    color: var(--brass);
+    letter-spacing: 0.08em;
+  }
+
+  table.grid{
+    width:100%;
+    border-collapse: collapse;
+    margin-bottom: 22px;
+  }
+  table.grid td{
+    text-align:center;
+    padding: 9px 2px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 13px;
+    color: var(--parchment-dim);
+    border: 1px solid var(--line);
+    position: relative;
+  }
+  table.grid tr:nth-child(3n+1) td{ border-top: 1px solid var(--brass); }
+  table.grid td .dn{
+    display:block;
+    font-size: 15px;
+    color: var(--parchment);
+    font-weight: 500;
+  }
+  table.grid td .dname{
+    display:block;
+    font-size: 8.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--parchment-dim);
+    margin-top: 2px;
+  }
+  table.grid td.today{
+    background: var(--today-glow);
+    border: 1px solid var(--brass-bright) !important;
+  }
+  table.grid td.today .dn{ color: var(--brass-bright); }
+  table.grid td.restday .dn{ color: var(--rouge); }
+
+  .caption{
+    font-family: "IBM Plex Serif", serif;
+    font-style: italic;
+    font-size: 12px;
+    color: var(--parchment-dim);
+    text-align:center;
+    line-height: 1.6;
+  }
+  .caption b{ color: var(--brass-bright); font-style: normal; font-weight: 400; }
+
+  @media (max-width: 420px){
+    table.grid td{ padding: 7px 1px; }
+    table.grid td .dn{ font-size: 13px; }
+    table.grid td .dname{ display:none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="plate">
+  <p class="eyebrow">Système Décimal · Reformed Calendar</p>
+  <h1>Calendrier Décimal</h1>
+  <p class="year-line" id="year-line">—</p>
+
+  <div class="today-readout">
+    <div class="big" id="today-big">—</div>
+    <div class="small" id="today-small">—</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="month-label">
+    <span class="name" id="month-name">—</span>
+    <span class="decades">3 DÉCADES · 30 DAYS</span>
+  </div>
+
+  <table class="grid" id="grid"></table>
+
+  <div class="caption">
+    12 months of <b>30</b> days, each split into 3 ten-day <b>décades</b>.
+    Months are numbered in Latin (<b>Unember → Duodecember</b>), days in Greek
+    (<b>Monoday → Decaday</b>) — roots already familiar worldwide from geometry
+    and existing month names, unlike the original's Parisian weather poetry.
+    5–6 <b>Epagomenal</b> days close out the year, belonging to no month.
+    Year begins at the September equinox (approximated here as Sept 22).
+  </div>
+</div>
+
+<script>
+(function(){
+  const MONTHS = ["Unember","Duember","Triember","Quadember","Quintember","Sextember",
+                  "September","October","November","December","Undecember","Duodecember"];
+  const DAYS = ["Monoday","Diday","Triday","Tetraday","Pentaday","Hexaday","Heptaday","Octaday","Enneaday","Decaday"];
+  const DAYS_ABBR = ["Mono","Di","Tri","Tetra","Penta","Hexa","Hepta","Octa","Ennea","Deca"];
+  const EPAGOMENAL = ["Epagomenal I","Epagomenal II","Epagomenal III","Epagomenal IV","Epagomenal V","Epagomenal VI (Leap)"];
+
+  function toRoman(num){
+    const vals = [1000,900,500,400,100,90,50,40,10,9,5,4,1];
+    const syms = ["M","CM","D","CD","C","XC","L","XL","X","IX","V","IV","I"];
+    let out = "";
+    for(let i=0;i<vals.length;i++){
+      while(num >= vals[i]){ out += syms[i]; num -= vals[i]; }
+    }
+    return out;
+  }
+
+  function isGregorianLeap(y){
+    return (y % 4 === 0 && y % 100 !== 0) || (y % 400 === 0);
+  }
+
+  function computeRepublicanDate(now){
+    const y = now.getFullYear();
+    // Approximate equinox epoch as Sept 22 each Gregorian year.
+    let epochYear = y;
+    let epoch = new Date(y, 8, 22); // month 8 = September
+    if(now < epoch){
+      epochYear = y - 1;
+      epoch = new Date(epochYear, 8, 22);
+    }
+    const republicanYear = epochYear - 1791; // Year I began autumn 1792
+
+    const msPerDay = 86400000;
+    const dayIndex = Math.floor((new Date(now.getFullYear(),now.getMonth(),now.getDate()) - epoch) / msPerDay); // 0-based
+
+    // number of epagomenal days this Republican year: leap if the *following*
+    // Gregorian year (in which the year ends, around next Sept) is a leap year
+    const complementaryCount = isGregorianLeap(epochYear + 1) ? 6 : 5;
+
+    if(dayIndex < 360){
+      const monthIndex = Math.floor(dayIndex / 30);       // 0-11
+      const dayOfMonth = (dayIndex % 30) + 1;              // 1-30
+      const decadeIndex = Math.floor((dayOfMonth - 1) / 10); // 0-2
+      const dayInDecadeIndex = (dayOfMonth - 1) % 10;       // 0-9
+      return {
+        republicanYear, monthIndex, dayOfMonth, decadeIndex, dayInDecadeIndex,
+        isEpagomenal:false, complementaryCount
+      };
+    } else {
+      const epagIndex = dayIndex - 360; // 0-4 or 0-5
+      return {
+        republicanYear, epagIndex, isEpagomenal:true, complementaryCount
+      };
+    }
+  }
+
+  function render(){
+    const now = new Date();
+    const r = computeRepublicanDate(now);
+
+    document.getElementById('year-line').textContent =
+      'Year ' + toRoman(r.republicanYear) + ' of the Republic  ·  epoch: autumnal equinox';
+
+    if(r.isEpagomenal){
+      document.getElementById('today-big').textContent = EPAGOMENAL[r.epagIndex];
+      document.getElementById('today-small').textContent =
+        'Standard date: ' + now.toDateString();
+      document.getElementById('month-name').textContent = 'Epagomenal Days';
+      document.getElementById('grid').innerHTML =
+        '<tr><td colspan="10" style="padding:20px; font-style:italic; color:var(--parchment-dim);">' +
+        'Outside the 12 months — ' + r.complementaryCount + ' days belonging to the year itself.</td></tr>';
+      return;
+    }
+
+    const dayName = DAYS[r.dayInDecadeIndex];
+    const monthName = MONTHS[r.monthIndex];
+
+    document.getElementById('today-big').textContent =
+      dayName + ', ' + r.dayOfMonth + ' ' + monthName + ', Year ' + toRoman(r.republicanYear);
+    document.getElementById('today-small').textContent =
+      'Standard date: ' + now.toDateString() + '  ·  Décade ' + toRoman(r.decadeIndex+1) + ' of III';
+    document.getElementById('month-name').textContent = monthName;
+
+    // Build 3x10 grid (rows = décades, cols = day-in-décade)
+    const grid = document.getElementById('grid');
+    grid.innerHTML = "";
+    for(let decade=0; decade<3; decade++){
+      const tr = document.createElement('tr');
+      for(let d=0; d<10; d++){
+        const dayOfMonth = decade*10 + d + 1;
+        const td = document.createElement('td');
+        const isToday = (decade === r.decadeIndex && d === r.dayInDecadeIndex);
+        const isRest = (d === 9);
+        if(isToday) td.classList.add('today');
+        if(isRest) td.classList.add('restday');
+        td.innerHTML = '<span class="dn">'+dayOfMonth+'</span><span class="dname">'+DAYS_ABBR[d]+'</span>';
+        tr.appendChild(td);
+      }
+      grid.appendChild(tr);
+    }
+  }
+
+  render();
+  setInterval(render, 60000); // refresh once a minute in case the date rolls over
+})();
+</script>
+
+</body>
+</html>
