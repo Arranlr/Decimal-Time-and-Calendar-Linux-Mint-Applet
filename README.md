@@ -47,7 +47,7 @@ cp -r cinnamon-applet/decimal-time@example.local ~/.local/share/cinnamon/applets
 ```
 
 ## Ok that's cool but what does it look like huh? Check this metric bliss out:
-<img width="400" height="550" alt="image" src="https://github.com/user-attachments/assets/ea6ca167-3d6b-4a0a-b801-a326282d927f" />
+<img width="427" height="649" alt="image" src="https://github.com/user-attachments/assets/f252e559-8580-4ccc-a485-2dc4bb9895a6" />
 
 
 ## Notes / simplifications
