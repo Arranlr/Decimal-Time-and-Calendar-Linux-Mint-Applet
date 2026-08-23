@@ -137,22 +137,33 @@ MyApplet.prototype = {
 
         // Navigation row
         const navItem = new PopupMenu.PopupBaseMenuItem({reactive: false});
-        const navBox = new St.BoxLayout({x_expand: true, style_class: 'decimal-nav-row'});
+        const navBox = new St.BoxLayout({vertical: true, x_expand: true, style_class: 'decimal-nav-row'});
+
+        const row1 = new St.BoxLayout({x_expand: true});
+        const row2 = new St.BoxLayout({x_expand: true});
+
         const todayBtn = new St.Button({label: 'Today', style_class: 'decimal-nav-button', x_expand: true});
         const prevBtn = new St.Button({label: '\u25C0 Prev Month', style_class: 'decimal-nav-button', x_expand: true});
         const nextBtn = new St.Button({label: 'Next Month \u25B6', style_class: 'decimal-nav-button', x_expand: true});
         const prevYearBtn = new St.Button({label: '\u25C0\u25C0 Prev Year', style_class: 'decimal-nav-button', x_expand: true});
         const nextYearBtn = new St.Button({label: 'Next Year \u25B6\u25B6', style_class: 'decimal-nav-button', x_expand: true});
+
+        row1.add(todayBtn, {expand: true});
+        row1.add(prevBtn, {expand: true});
+        row1.add(nextBtn, {expand: true});
+
+        row2.add(prevYearBtn, {expand: true});
+        row2.add(nextYearBtn, {expand: true});
+
         todayBtn.connect('clicked', () => this._navToday());
         prevBtn.connect('clicked', () => this._navPrev());
         nextBtn.connect('clicked', () => this._navNext());
         prevYearBtn.connect('clicked', () => this._navPrevYear());
         nextYearBtn.connect('clicked', () => this._navNextYear());
-        navBox.add(todayBtn, {expand: true});
-        navBox.add(prevBtn, {expand: true});
-        navBox.add(nextBtn, {expand: true});
-        navBox.add(prevYearBtn, {expand: true});
-        navBox.add(nextYearBtn, {expand: true});
+
+        navBox.add(row1, {expand: true});
+        navBox.add(row2, {expand: true});
+
         navItem.addActor(navBox);
         this.menu.addMenuItem(navItem);
 
@@ -167,7 +178,7 @@ MyApplet.prototype = {
         this._gridBox = new St.BoxLayout({vertical: true, style_class: 'decimal-grid'});
         this._gridItem.addActor(this._gridBox);
         this.menu.addMenuItem(this._gridItem);
-        
+
         // After building the menu, render the initial calendar view
         this._renderCalendar();
     },
@@ -229,7 +240,7 @@ MyApplet.prototype = {
         const dHour = Math.floor(decimalSecondsTotal / 10000);
         const dMinute = Math.floor((decimalSecondsTotal % 10000) / 100);
         const dSecond = Math.floor(decimalSecondsTotal % 100);
-        this.set_applet_label(`${dHour}:${pad(dMinute)}:${pad(dSecond)}`);
+        this.set_applet_label(`${dHour}:${pad(dMinute)}:${pad(dSecond)} M`);
         return true;
     },
 
@@ -245,7 +256,7 @@ MyApplet.prototype = {
         const dSecond = Math.floor(remAfterMinute);
         const dDeci = Math.floor((remAfterMinute - dSecond) * 10);
 
-        this._timeLabel.set_text(`${dHour}:${pad(dMinute)}:${pad(dSecond)}.${dDeci}`);
+        this._timeLabel.set_text(`${dHour}:${pad(dMinute)}:${pad(dSecond)}.${dDeci} M`);
         this._stdLabel.set_text(`standard time ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`);
         this._dialArea.queue_repaint();
 
