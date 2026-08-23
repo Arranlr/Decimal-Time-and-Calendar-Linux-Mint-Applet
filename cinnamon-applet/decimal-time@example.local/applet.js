@@ -167,6 +167,9 @@ MyApplet.prototype = {
         this._gridBox = new St.BoxLayout({vertical: true, style_class: 'decimal-grid'});
         this._gridItem.addActor(this._gridBox);
         this.menu.addMenuItem(this._gridItem);
+        
+        // After building the menu, render the initial calendar view
+        this._renderCalendar();
     },
 
     _drawHand: function (cr, cx, cy, fraction, length, width, rgba) {
