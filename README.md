@@ -57,4 +57,4 @@ cp -r cinnamon-applet/decimal-time@example.local ~/.local/share/cinnamon/applets
 - The leap-day rule (5 vs. 6 epagomenal days) is a modern heuristic tied to
   the Gregorian leap cycle, since the original calendar never settled on one
   before it was abolished in 1806.
-  -Viva la revolución!
+- Viva la revolución!
