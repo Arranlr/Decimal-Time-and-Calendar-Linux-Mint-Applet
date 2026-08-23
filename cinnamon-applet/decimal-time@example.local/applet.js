@@ -141,12 +141,18 @@ MyApplet.prototype = {
         const prevBtn = new St.Button({label: '\u25C0 Prev', style_class: 'decimal-nav-button', x_expand: true});
         const todayBtn = new St.Button({label: 'Today', style_class: 'decimal-nav-button', x_expand: true});
         const nextBtn = new St.Button({label: 'Next \u25B6', style_class: 'decimal-nav-button', x_expand: true});
+        const prevYearBtn = new St.Button({label: '\u25C0\u25C0 Prev Year', style_class: 'decimal-nav-button', x_expand: true});
+        const nextYearBtn = new St.Button({label: 'Next Year \u25B6\u25B6', style_class: 'decimal-nav-button', x_expand: true});
         prevBtn.connect('clicked', () => this._navPrev());
         todayBtn.connect('clicked', () => this._navToday());
         nextBtn.connect('clicked', () => this._navNext());
+        prevYearBtn.connect('clicked', () => this._navPrevYear());
+        nextYearBtn.connect('clicked', () => this._navNextYear());
         navBox.add(prevBtn, {expand: true});
         navBox.add(todayBtn, {expand: true});
         navBox.add(nextBtn, {expand: true});
+        navBox.add(prevYearBtn, {expand: true});
+        navBox.add(nextYearBtn, {expand: true});
         navItem.addActor(navBox);
         this.menu.addMenuItem(navItem);
 
@@ -267,6 +273,16 @@ MyApplet.prototype = {
             this._view.year += 1;
             this._view.monthIndex = 0;
         }
+        this._renderCalendar();
+    },
+
+    _navNextYear: function () {
+        this._view.year += 1;
+        this._renderCalendar();
+    },
+    
+    _navPrevYear: function () {
+        this._view.year -= 1;
         this._renderCalendar();
     },
 
